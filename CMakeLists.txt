@@ -59,7 +59,7 @@ target_link_libraries(train PRIVATE nn_core)
 
 # Unit testing for matrix, layers and gradient check
 enable_testing()
-foreach(t test_matrix test_layers test_gradcheck)
+foreach(t test_matrix test_layers test_gradcheck test_data)
   add_executable(${t} tests/${t}.cpp)
   target_link_libraries(${t} PRIVATE nn_core)
   add_test(NAME ${t} COMMAND ${t})
