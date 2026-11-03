@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug train", 
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/train", //point to exedcutable 
+      "args": ["--epochs", "1"], //cl args
+      "cwd": "${workspaceFolder}" //current working directory
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+    //Set destination for build files 
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  //Set debug configuration
+  "cmake.debugConfig": { "cwd": "${workspaceFolder}" }
+}
