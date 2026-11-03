@@ -85,6 +85,8 @@ inline FMNISTData load_fashion_mnist(const std::string& image_file, const std::s
     data.labels.assign(raw_labels.begin(), raw_labels.end()); //convert raw data to target labels vector type
     return data;
 
+}
+
 //return class name for each label
 inline const char* class_name(int label){
     static const char* class_names[10] = {
@@ -97,4 +99,3 @@ inline const char* class_name(int label){
 
 
 
-}
