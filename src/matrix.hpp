@@ -12,10 +12,14 @@ struct Matrix{
         : rows(r), cols(c), data(static_cast<std::size_t>(r) * c, placeholder){}
     
     double& operator()(int i, int j){
+        assert(i >= 0 && i < rows && "row out of bounds");
+        assert(j >= 0 && j < cols && "column of out of bounds");
         return data[static_cast<std::size_t>(i) * cols + j];
     }
 
     double operator()(int i, int j) const{
+        assert(i >= 0 && i < rows && "row out of bounds");
+        assert(j >= 0 && j < cols && "column of out of bounds");
         return data[static_cast<std::size_t>(i) * cols + j];
     }
 };
@@ -43,7 +47,7 @@ inline Matrix matmulAtB(const Matrix& A, const Matrix& B){
         for(int j = 0; j < A.cols; ++j){ //iterate through columns
             const double val = A(j, i); //saves value for calculation and flip columns and rows to transpose matrix before calculation
             for(int k = 0; k < B.cols; ++j){ //loop through B
-                C(i, k) += val * B(j, k) //calculate value in result matrix
+                C(i, k) += val * B(j, k); //calculate value in result matrix
             }
         }
     }
@@ -63,5 +67,5 @@ inline Matrix matmulABt(const Matrix& A, const Matrix& B){
         }
     }
     return C;
-
+}
 
