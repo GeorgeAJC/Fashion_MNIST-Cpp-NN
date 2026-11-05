@@ -49,31 +49,31 @@ int main(){
     //check calculated values are correct for matmulAB
     Matrix C = matmulAB(A,B);
     if(!near(C(0,0),58)){ //checks top left value is calculated to be 58
-        std::cerr << "Test Failed at line" << 39 << ": near(C(0,0),58)" << std::endl; //print result of tests
+        std::cerr << "Test Failed at line" << 51 << ": near(C(0,0),58)" << std::endl; //print result of tests
         ++test_fails;
     }
     if(!near(C(0,1),64)){ //checks top right value is calculated to be 64
-        std::cerr << "Test Failed at line" << 43 << ": near(C(0,1),64)" << std::endl;
+        std::cerr << "Test Failed at line" << 55 << ": near(C(0,1),64)" << std::endl;
         ++test_fails;
     }
     if(!near(C(1,0),139)){ //checks bottom left value is calculated to be 139
-        std::cerr << "Test Failed at line" << 47 << ": near(C(1,0),139)" << std::endl;
+        std::cerr << "Test Failed at line" << 59 << ": near(C(1,0),139)" << std::endl;
         ++test_fails;
     }
     if(!near(C(1,1),154)){ //checks bottom right value is calculated to be 154
-        std::cerr << "Test Failed at line" << 51 << ": near(C(1,1),154)" << std::endl;
+        std::cerr << "Test Failed at line" << 63 << ": near(C(1,1),154)" << std::endl;
         ++test_fails;
     }
     //check transposed multiplication functions work for A and B transposition
     if(!same(matmulAtB(B, B), matmulAB(transpose(B), B))){ //checks transposed A multiplication matrix gives same result as test transpose method
-        std::cerr << "Test Failed at line" << 55 << ": same(matmulAtB(B, B), matmulAB(transpose(B), B))" << std::endl;
+        std::cerr << "Test Failed at line" << 68 << ": same(matmulAtB(B, B), matmulAB(transpose(B), B))" << std::endl;
         ++test_fails;
     }
     if(!same(matmulABt(A, A), matmulAB(A, transpose(A)))){ //checks transposed B multiplication matrix gives same result as test transpose method
-        std::cerr << "Test Failed at line" << 59 << ": same(matmulABt(A, A), matmulAB(A, transpose(A)))" << std::endl;
+        std::cerr << "Test Failed at line" << 72 << ": same(matmulABt(A, A), matmulAB(A, transpose(A)))" << std::endl;
         ++test_fails;
     }
-    
+
     if (test_fails == 0){
         std::cout << "Tests passed"; //return success message if no tests failed 
         return 0;
