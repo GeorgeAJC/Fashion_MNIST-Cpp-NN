@@ -1,5 +1,5 @@
 #pragma once
-#include <assert>
+#include <cassert>
 #include <vector>
 
 struct Matrix{
@@ -23,7 +23,7 @@ struct Matrix{
 
 inline Matrix matmulAB(const Matrix& A, const Matrix& B){
     assert(A.cols == B.rows); //check the number of columns and rows are equal to allow matrix multiplication
-    Matrix C(A.rows, B.cols); //create new Matrix to hold result 
+    Matrix C(A.rows, B.cols, 0.0); //create new Matrix to hold result 
     for(int i = 0; i < A.rows; ++i){ //iterate through rows
         for(int j = 0; j < A.cols; ++j){ //iterate through columns
             const double val = A(i, j); //saves value for calculation
@@ -38,7 +38,7 @@ inline Matrix matmulAB(const Matrix& A, const Matrix& B){
 
 inline Matrix matmulAtB(const Matrix& A, const Matrix& B){
     assert(A.rows == B.rows);
-    Matrix C(A.cols, B.cols);
+    Matrix C(A.cols, B.cols, 0.0);
     for(int i = 0; i < A.rows; ++i){ //iterate through rows
         for(int j = 0; j < A.cols; ++j){ //iterate through columns
             const double val = A(j, i); //saves value for calculation and flip
@@ -52,7 +52,7 @@ inline Matrix matmulAtB(const Matrix& A, const Matrix& B){
 
 inline Matrix matmulABt(const Matrix& A, const Matrix& B){
     assert(A.cols == B.cols);
-    Matrix C(A.rows, B.rows);
+    Matrix C(A.rows, B.rows, 0.0);
     for(int i = 0; i < A.rows; ++i){ //iterate through rows
         for(int j = 0; j < B.rows; ++j){ //iterate through columns
             double val = 0.0; //saves value for calculation, flipping the columns and rows to transpose matrix A before calculation
