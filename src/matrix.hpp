@@ -12,8 +12,8 @@ struct Matrix{
         : rows(r), cols(c), data(static_cast<std::size_t>(r) * c, placeholder){}
     
     double& operator()(int i, int j){
-        assert(i >= 0 && i < rows && "row out of bounds");
-        assert(j >= 0 && j < cols && "column of out of bounds");
+        assert(i >= 0 && i < rows && "row out of bounds"); //check row bounds 
+        assert(j >= 0 && j < cols && "column of out of bounds"); //check column bounds
         return data[static_cast<std::size_t>(i) * cols + j];
     }
 
@@ -63,7 +63,7 @@ inline Matrix matmulABt(const Matrix& A, const Matrix& B){
             for(int k = 0; k < A.cols; ++k){ //loop through B
                 val += A(i, k) * B(j, k); //calculate dot product and sum up
             }
-            C(i, j) = val;
+            C(i, j) = val; //set sum to matrix value
         }
     }
     return C;
