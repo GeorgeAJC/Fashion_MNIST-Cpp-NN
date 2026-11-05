@@ -43,8 +43,8 @@ inline Matrix matmulAB(const Matrix& A, const Matrix& B){
 inline Matrix matmulAtB(const Matrix& A, const Matrix& B){
     assert(A.rows == B.rows);
     Matrix C(A.cols, B.cols, 0.0);
-    for(int i = 0; i < A.rows; ++i){ //iterate through rows
-        for(int j = 0; j < A.cols; ++j){ //iterate through columns
+    for(int i = 0; i < A.cols; ++i){ //iterate through rows
+        for(int j = 0; j < A.rows; ++j){ //iterate through columns
             const double val = A(j, i); //saves value for calculation and flip columns and rows to transpose matrix before calculation
             for(int k = 0; k < B.cols; ++k){ //loop through B
                 C(i, k) += val * B(j, k); //calculate value in result matrix
@@ -61,9 +61,9 @@ inline Matrix matmulABt(const Matrix& A, const Matrix& B){
         for(int j = 0; j < B.rows; ++j){ //iterate through rows of matrix B
             double val = 0.0; //create float to hold calculated value 
             for(int k = 0; k < A.cols; ++k){ //loop through B
-                val += A(i, j) * B(k, j); //calculate dot product and sum up
-                C(i, k) = val;
+                val += A(i, k) * B(j, k); //calculate dot product and sum up
             }
+            C(i, j) = val;
         }
     }
     return C;
