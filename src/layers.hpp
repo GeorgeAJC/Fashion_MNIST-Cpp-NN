@@ -133,3 +133,46 @@ struct ReLu : Layer{
 
 
 };
+
+struct SoftmaxCrossEntropy{
+    Matrix probabilities;
+    std::vector<int> labels;
+
+    //forwar pass for calculating softmax probabilities and sc cross entropy loss
+    double forward(const Matrix& logits, const std::vector<int>& correct_labels){
+        labels = correct_labels; //save correct labels for backwards pass
+        probabilities = Matrix(logits.rows, logits.cols, 0.0);
+        double loss = 0.0;
+        for(int i = 0; i < logits.rows; ++i){    //find max logit
+            double mx = logits(i, 0);
+            for(int j = 1; j < logits.cols; ++j){
+                mx = std::max(mx, logits(i, j));
+            }
+            //calculate exponention values and sum up
+            double sum = 0.0;
+            for(int j = 0; j < logits.cols; ++j){
+                probabilities(i, j) = std::exp(logits(i,j) - mx); //subtract max to prevent floating point error
+                sum += probabilities(i, j);
+            }
+            // normalise to [0,1] to get probabilities
+            for(int j = 0; j < logits.cols; ++ j){
+                probabilities(i, j) /= sum;
+            }
+            // add up negative logs of probabilities to get negative log-likelihood
+            loss -= std::log(probabilities(i, correct_labels[i]) + 1e-12); //add small floating point number to prevent NaN values building up when a probability is equal to 0.0
+        }
+        return loss / logits.rows; //return mean loss
+    }
+    //backwards pass that computes gradients with respect to the logits
+    Matrix backwards() const{
+        Matrix grads = probabilities;
+        for(int i = 0; i < grads.rows; ++i){ 
+            grads(i, labels[i]) -= 1.0; //take 1 away from correct class (one-hot subtraction)
+        }
+        for(std::size_t j = 0; j < grads.data.size(); ++j){
+            grads.data[j] /= grads.rows; //sacle gradient for backwards propagation
+        }
+        return grads; //return gradients 
+    }
+};
+
