@@ -21,7 +21,7 @@ int main(){
 
     //test relu backwards pass
     Matrix g(1, 3, 1.0);
-    Matrix gi = relu.backward(g);
+    Matrix gi = relu.backwards(g);
     if (!(gi(0,0) == 0 && gi(0, 1) == 0 && gi(0, 2) == 1)){
         std::cerr << "ReLu backwards test failed" << std::endl;
         test_fails++;
@@ -57,3 +57,4 @@ int main(){
     std::cout << "Number of Tests Failed:" << test_fails; //return number of failed tests
     return 1;
 }
+
