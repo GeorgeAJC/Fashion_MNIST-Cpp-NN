@@ -86,9 +86,9 @@ struct Dense : Layer {
         for(int i = 0; i < grad_out.cols ; ++i){
             double total = 0.0;
             for(int j = 0; j < grad_out.rows; ++j){
-                Bias.grad(0, i) = total; //calculate bias gradients 
-
+                total += grad_out(j, i); //sum bias gradients 
             }
+            Bias.grad(0, i) = total;
         }
         return matmulABt(grad_out, Weights.value); //retirn input gradients 
     }
