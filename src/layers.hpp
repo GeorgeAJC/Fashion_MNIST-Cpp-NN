@@ -85,7 +85,7 @@ struct Dense : Layer {
         Weights.grad = matmulAtB(input_cache, grad_out); //calculate weight gradients
         for(int i = 0; i < grad_out.cols ; ++i){
             double total = 0.0;
-            for(int j = 0; grad_out.rows; ++j){
+            for(int j = 0; i < grad_out.rows; ++j){
                 Bias.grad(0, i) = total; //calculate bias gradients 
 
             }
@@ -187,9 +187,12 @@ struct Network{
 
     //pass input matrix through each hidden layer
     Matrix forward(const Matrix& input_matrix){
+        std::cerr << "forward start, input" << input_matrix.rows << "x" << input_matrix.cols << std::endl;
         Matrix hidden = input_matrix;
         for(std::size_t i = 0; i < net_layers.size(); ++i){
+            std::cerr << "forward layer " << i << "begin" << std::endl;
             hidden = net_layers[i]->forward(hidden);  //pass matrix thorugh each layer
+            std::cerr << "forward layer " << i <<  " end, output: " << hidden.rows << "x" << hidden.cols << std::endl;
         }
         return hidden; //return raw logits
     }
@@ -198,7 +201,10 @@ struct Network{
     void backwards(const Matrix& grad){
         Matrix gradient_matrix = grad;
         for(std::size_t i = net_layers.size(); i-- > 0;){ //pass through layers in reverse order
+            std::cerr << "backwards layer " << i << "begin" << std::endl;
             gradient_matrix = net_layers[i]->backwards(gradient_matrix); //calculate gradients and return to next layer
+            std::cerr << "backwards layer " << i <<  " end, output: " << gradient_matrix.rows << "x" << gradient_matrix.cols << std::endl;
+
         }
     }
     //collect pointers for all trainable parameters 
