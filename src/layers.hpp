@@ -188,7 +188,7 @@ struct Network{
     //pass input matrix through each hidden layer
     Matrix forward(const Matrix& input_matrix){
         Matrix hidden = input_matrix;
-        for(std::size_t i = net_layers.size(); i < net_layers.size(); ++i){
+        for(std::size_t i = 0; i < net_layers.size(); ++i){
             hidden = net_layers[i]->forward(hidden);  //pass matrix thorugh each layer
         }
         return hidden; //return raw logits
