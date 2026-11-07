@@ -197,7 +197,7 @@ struct Network{
     //compute gradient loss for each layer and pass upstream
     void backwards(const Matrix& grad){
         Matrix gradient_matrix = grad;
-        for(std::size_t i = net_layers.size(); i >= 0; --i){ //pass through layers in reverse order
+        for(std::size_t i = net_layers.size(); i-- > 0;){ //pass through layers in reverse order
             gradient_matrix = net_layers[i]->backwards(gradient_matrix); //calculate gradients and return to next layer
         }
     }
