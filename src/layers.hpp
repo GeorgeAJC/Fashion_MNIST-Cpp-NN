@@ -85,7 +85,7 @@ struct Dense : Layer {
         Weights.grad = matmulAtB(input_cache, grad_out); //calculate weight gradients
         for(int i = 0; i < grad_out.cols ; ++i){
             double total = 0.0;
-            for(int j = 0; i < grad_out.rows; ++j){
+            for(int j = 0; j < grad_out.rows; ++j){
                 Bias.grad(0, i) = total; //calculate bias gradients 
 
             }
