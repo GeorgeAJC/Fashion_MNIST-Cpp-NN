@@ -21,7 +21,7 @@ struct Param{
 struct Layer{
     virtual ~Layer() {}
     virtual Matrix forward(const Matrix& input_matrix) = 0;
-    virtual Matrix backward(const Matrix& grad_out) = 0;
+    virtual Matrix backwards(const Matrix& grad_out) = 0;
     virtual std::vector<Param*> params(){
         return std::vector<Param*>();
     }
@@ -81,7 +81,7 @@ struct Dense : Layer {
         return output_matrix;
     }
     //backward pass 
-    Matrix backward(const Matrix& grad_out) override{
+    Matrix backwards(const Matrix& grad_out) override{
         Weights.grad = matmulAtB(input_cache, grad_out); //calculate weight gradients
         for(int i = 0; i < grad_out.cols ; ++i){
             double total = 0.0;
@@ -122,7 +122,7 @@ struct ReLu : Layer{
     }
 
     //if original input was less than or equal to 0.0 the derivative is 0, else it remains the same.
-    Matrix backward(const Matrix& grad_out) override{
+    Matrix backwards(const Matrix& grad_out) override{
         Matrix output_matrix = grad_out;
         for(std::size_t i = 0; i < output_matrix.data.size(); ++i){
             if(input_cache.data[i] <= 0.0){
@@ -177,3 +177,37 @@ struct SoftmaxCrossEntropy{
     }
 };
 
+//create network container to hold pipeline of layers and backprogation and gradient checking algorthm
+struct Network{
+    std::vector<std::unique_ptr<Layer>> net_layers; //vector to store neural networks layers
+
+    void add(std::unique_ptr<Layer> layer){ //method to add layers
+        net_layers.push_back(std::move(layer)); //use move to cast pointer as r valve ref to add to vector without compliation error so network has ownership of layers 
+    }
+
+    //pass input matrix through each hidden layer
+    Matrix forward(const Matrix& input_matrix){
+        Matrix hidden = input_matrix;
+        for(std::size_t i = net_layers.size(); i < net_layers.size(); ++i){
+            hidden = net_layers[i]->forward(hidden);  //pass matrix thorugh each layer
+        }
+        return hidden; //return raw logits
+    }
+
+    //compute gradient loss for each layer and pass upstream
+    void backwards(const Matrix& grad){
+        Matrix gradient_matrix = grad;
+        for(std::size_t i = net_layers.size(); i >= 0; --i){ //pass through layers in reverse order
+            gradient_matrix = net_layers[i]->backwards(gradient_matrix); //calculate gradients and return to next layer
+        }
+    }
+    //collect pointers for all trainable parameters 
+    std::vector<Param*> params(){
+        std::vector<Param*> all; //vector to hold all parameters
+        for(std::size_t i = 0; i < net_layers.size(); ++i){ //loop through layers
+            std::vector<Param*> p = net_layers[i]->params(); //fetch paramters from layer
+            all.insert(all.end(), p.begin(), p.end()); //add all parameters in layer to vector of all layers parameters
+        }
+        return all; //return all trainable parameters
+    }
+};
