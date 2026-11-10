@@ -76,3 +76,48 @@ static Matrix make_batch(const FMNISTData& d, const vector<int>& idx, int start,
     }
     return x; //return batch 
 }
+
+
+
+//find max value in row
+static int argmax_row(const Matrix& m, int i){
+    int best = 0; //set best value to first index by default
+    for(int j = 1; j < m.cols; ++j){ //loop thorugh remaining columns
+        if(m(i, j) > m(i, best)){
+            best = j; //replace best with value found if its greater than current best
+        }
+    }
+    return best; //return best value
+}
+
+//result evaluation struct
+struct EvalResult{
+    double loss;
+    double accuracy;
+};
+
+//evaluate samples of the Dataset
+static EvalResult evaluate(Network& net, const FMNISTData& d, int begin, int end){
+    vector<int> idx; //index vector 
+    for(int i = begin; i < end; ++i){
+        idx.push_back(i); //add all indexes that will be used for evaulation
+    }
+    SoftmaxCrossEntropy ce;
+    double loss = 0;
+    int correct = 0;
+    vector<int> y;
+    for(int s = 0; s < static_cast<int>(idx.size()); s += 256){
+        Matrix x = make_batch(d, idx, s, 256, y); //extract mini batch and labels
+        Matrix out = net.forward(x); //forward pass
+        loss += ce.forward(out, y) * out.rows; //total loss
+        for(int i = 0; i < out.rows; ++i){
+            correct += (argmax_row(out, i) == y[i]); //count number of true predicitons
+        }
+    }
+    //add all results to evaluation result struct 
+    EvalResult res;
+    res.loss = loss/idx.size(); //mean loss
+    res.accuracy = static_cast<double>(correct) / idx.size(); //classification accuracy ratio
+    return res;
+}
+
