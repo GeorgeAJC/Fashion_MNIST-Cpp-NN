@@ -2,6 +2,12 @@
 #include <vector>
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
+#include <chrono>
+#include <fstream>
+#include <memory>
+#include <numeric>
+#include <random>
 
 
 
@@ -30,7 +36,7 @@ static Config parse_args(int argc, char** argv){
     Config c;
     //loop through each arguement
     for(int i = 1; i < argc; ++i){
-        std::string a = argc[i];
+        std::string a = argv[i];
         if(a == "--full"){
             c.full = true;
             continue;
@@ -61,7 +67,7 @@ static Config parse_args(int argc, char** argv){
 }
 
 //helper functions to from minibatches of image+labels for training and evaluation
-static Matrix make_batch(const FMNISTData& d, const vector<int>& idx, int start, int bs, vector<int>& y_out{
+static Matrix make_batch(const FMNISTData& d, const vector<int>& idx, int start, int bs, vector<int>& y_out){
     const int n = std::min (bs, static_cast<int>(idx.size()) - start); //batch size with last batch being the size of the amount of data left in the dataset
     const int dimensions = d.rows * d.cols; //dimensions of each image
     Matrix x(n, dimensions, 0.0); //create a batch matrix
@@ -121,3 +127,58 @@ static EvalResult evaluate(Network& net, const FMNISTData& d, int begin, int end
     return res;
 }
 
+int main(int argc, char** argv){
+    try{
+        //create config object from args
+        Config cfg = parse_args(argc, argv);
+
+        //load training and testing data
+        FMNISTData train = load_fashion_mnist(cfg.directory + "/train-iamges-idx3-ubypte", cfg.directory + "/train-image-idx1-ubyte");
+        FMNISTData test = load_fashion_mnist(cfg.directory + "/t10k-iamges-idx3-ubypte", cfg.directory + "/t10k-image-idx1-ubyte");
+
+        //validation set
+        const int n_train = cfg.full ? train.n : train.n - 5000;
+
+        //random seed for layer creation
+        std::mt19937 rng(cfg.seed);
+
+        //initialisers
+        Init init = Init::He;
+        if(cfg.initialiser == "naive"){
+            init = Init::Naive;
+        }else if(cfg.initialiser == "small"){
+            init = Init::Naive;
+        }
+
+        //create network
+        Network net;
+        net.add(make_layer<Dense>(784, 128, rng, init));
+        net.add(make_layer<ReLu>());
+        net.add(make_layer<Dense>(128, 64, rng, init));
+        net.add(make_layer<ReLu>());
+        net.add(make_layer<Dense>(64, 10, rng, init));
+
+        //optimisers
+        std::unique_ptr<Optimiser> opt;
+        if(cfg.optimiser == "sgd"){
+            opt.reset(new SGD(cfg.learning_rate, 0.0));
+        }else if(cfg.optimiser == "momentum"){
+            opt.reset(new SGD(cfg.learning_rate, 0.9));
+        }else{ //Adam optimiser that hasn't been implemented yet
+            opt.reset(new Adam(cfg.learning_rate));
+        }
+
+        //check if csv is opened sucessfully and write header
+        std::ofstream csv(cfg.out.c_str());
+        if(!csv){
+            throw std::runtime_error("Cannot write " + cfg.out);
+        }
+        csv << "epoch,train_loss,val_loss,val_acc,seconds \n";
+
+        //SCE loss
+        SoftmaxCrossEntropy loss;
+        std::vector<int> idx(n_train);
+        std::iota(idx.begin(), idx.end(), rng);
+        std::vector<int> y;
+    }
+} 
