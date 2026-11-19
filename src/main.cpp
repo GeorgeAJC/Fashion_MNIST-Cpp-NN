@@ -208,5 +208,42 @@ int main(int argc, char** argv){
             //append row to CSV training log 
             csv << e << "," << total / batches << "," << val.loss << "," << val.accuracy << "," << secs << std::endl;
         }
+
+        //evaluate trained network on test data
+        EvalResult t = evaluate(net, test, 0, test.n);
+        std::cout << "Test accuracy: " << t.accuracy << std::endl;
+
+        //build 10x10 cm if output path is configured
+        if(!cfg.confusion_matrix.empty()){
+            std::vector<std::vector<int>> cm(
+                10, std::vector<int>(10, 0)
+            );
+
+            //set samples to sequential order
+            std::vector<int> all(test.n);
+            std::iota(all.begin(), all.end(), 0);
+
+            //run inference and count correct predictions and misclassifications
+            for(int s = 0; s < test.n; s+= 256){
+                Matrix x = make_batch(test, all, s, 256, y);
+                Matrix out = net.forward(x);
+                for(int i = 0; i < out.rows ; ++i){
+                    cm[y[i]][argmax_row(out, i)]++;
+                }
+            }
+
+            //write confusion matrix to CSV
+            std::ofstream f(cfg.confusion_matrix.c_str());
+            for(int r = 0; r < 10; ++r){
+                for(int c = 0; c < 10; ++c){
+                    f << cm[r][c] << (c < 9 ? "," : "\n");
+                }
+            }
+        }
+    }catch(const std::exception& ex){
+        //report standard exceptions and exit
+        std::cerr << "error: " << ex.what() << std::endl;
+        return 1;
     }
+    return 0;
 } 
