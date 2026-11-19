@@ -160,6 +160,7 @@ int main(int argc, char** argv){
 
         //optimisers
         std::unique_ptr<Optimiser> opt;
+        opt.reset(new SGD(cfg.learning_rate, 0.0)); //default while Adam inst implemented
         if(cfg.optimiser == "sgd"){
             opt.reset(new SGD(cfg.learning_rate, 0.0));
         }else if(cfg.optimiser == "momentum"){
@@ -178,7 +179,7 @@ int main(int argc, char** argv){
         //SCE loss
         SoftmaxCrossEntropy loss;
         std::vector<int> idx(n_train);
-        std::iota(idx.begin(), idx.end(), rng);
+        std::iota(idx.begin(), idx.end(), 0);
         std::vector<int> y;
 
         for(int e = 0; e < cfg.epochs; ++e){
