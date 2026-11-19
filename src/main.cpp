@@ -19,10 +19,10 @@ using std::string;
 using std::vector;
 
 struct Config{
-    string directory = "data";
+    string directory = "C:/programming/CV PROJECTS/Fashion MNIST C++ NN/data";
     string optimiser = "adam";
     string initialiser = "he";
-    string out = "results/run.csv";
+    string out = "C:/programming/CV PROJECTS/Fashion MNIST C++ NN/results/run.csv";
     string confusion_matrix  = "";
     int epochs = 20;
     int batch = 64;
@@ -55,7 +55,7 @@ static Config parse_args(int argc, char** argv){
         else if(a == "--cm") c.confusion_matrix = v;
         else if(a == "--epochs") c.epochs = std::stoi(v);
         else if(a == "--batch") c.batch = std::stoi(v);
-        else if(a == "--lr") c.learning_rate = std::stoi(v);
+        else if(a == "--lr") c.learning_rate = std::stod(v);
         else if(a == "--seed") c.seed = static_cast<unsigned>(std::stoul(v));
         //if unrecognised flag parsed then terminate 
         else{
@@ -133,8 +133,8 @@ int main(int argc, char** argv){
         Config cfg = parse_args(argc, argv);
 
         //load training and testing data
-        FMNISTData train = load_fashion_mnist(cfg.directory + "/train-images-idx3-ubyte", cfg.directory + "/train-image-idx1-ubyte");
-        FMNISTData test = load_fashion_mnist(cfg.directory + "/t10k-images-idx3-ubyte", cfg.directory + "/t10k-image-idx1-ubyte");
+        FMNISTData train = load_fashion_mnist(cfg.directory + "/train-images-idx3-ubyte", cfg.directory + "/train-labels-idx1-ubyte");
+        FMNISTData test = load_fashion_mnist(cfg.directory + "/t10k-images-idx3-ubyte", cfg.directory + "/t10k-labels-idx1-ubyte");
 
         //validation set
         const int n_train = cfg.full ? train.n : train.n - 5000;
