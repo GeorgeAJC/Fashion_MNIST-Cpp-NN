@@ -187,7 +187,7 @@ int main(int argc, char** argv){
             double total =0.0;
             int batches = 0;
             for(int s = 0; s < n_train; s += cfg.batch){ //loop through training set 
-                Matrix x = make_batch(train, idx, s, s += cfg.batch, y); //creates mini batch
+                Matrix x = make_batch(train, idx, s, cfg.batch, y); //creates mini batch
                 total += loss.forward(net.forward(x), y); //compute predictions and calculate total loss
                 net.backwards(loss.backwards());  //find loss gradient and backpropogate
                 opt->step(net.params()); //applies optimiser to weights
