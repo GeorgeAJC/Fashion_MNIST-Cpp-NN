@@ -133,8 +133,8 @@ int main(int argc, char** argv){
         Config cfg = parse_args(argc, argv);
 
         //load training and testing data
-        FMNISTData train = load_fashion_mnist(cfg.directory + "/train-images-idx3-ubypte", cfg.directory + "/train-image-idx1-ubyte");
-        FMNISTData test = load_fashion_mnist(cfg.directory + "/t10k-images-idx3-ubypte", cfg.directory + "/t10k-image-idx1-ubyte");
+        FMNISTData train = load_fashion_mnist(cfg.directory + "/train-images-idx3-ubyte", cfg.directory + "/train-image-idx1-ubyte");
+        FMNISTData test = load_fashion_mnist(cfg.directory + "/t10k-images-idx3-ubyte", cfg.directory + "/t10k-image-idx1-ubyte");
 
         //validation set
         const int n_train = cfg.full ? train.n : train.n - 5000;
