@@ -180,5 +180,33 @@ int main(int argc, char** argv){
         std::vector<int> idx(n_train);
         std::iota(idx.begin(), idx.end(), rng);
         std::vector<int> y;
+
+        for(int e = 0; e = cfg.epochs; ++e){
+            std::shuffle(idx.begin(), idx.end(), rng); //shuffle batch so program doesn't memorize batch order
+            auto t0 = std::chrono::steady_clock::now();
+            double total =0.0;
+            int batches = 0;
+            for(int s = 0; s < n_train; s += cfg.batch){ //loop through training set 
+                Matrix x = make_batch(train, idx, s, s += cfg.batch, y); //creates mini batch
+                total += loss.forward(net.forward(x), y); //compute predictions and calculate total loss
+                net.backwards(loss.backwards());  //find loss gradient and backpropogate
+                opt->step(net.params()); //applies optimiser to weights
+                ++batches;
+            }
+
+            //second count of training pass
+            const double secs = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count(); 
+
+            //run evaluation to find current model loss and accuracy  
+            EvalResult val = {0.0, 0.0};
+            if(!cfg.full){
+                val = evaluate(net, train, n_train, train.n);
+            }
+
+            //print summary for epoch
+            std::cout << "epoch " << e << " train loss " << total / batches << " val loss " << val.loss << " val accuracy " << val.accuracy << " time:" << secs <<"s" << std::endl;
+            //append row to CSV training log 
+            csv << e << "," << total / batches << "," << val.loss << "," << val.accuracy << "," << secs << std::endl;
+        }
     }
 } 
