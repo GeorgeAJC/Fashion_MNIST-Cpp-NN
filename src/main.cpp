@@ -164,9 +164,9 @@ int main(int argc, char** argv){
             opt.reset(new SGD(cfg.learning_rate, 0.0));
         }else if(cfg.optimiser == "momentum"){
             opt.reset(new SGD(cfg.learning_rate, 0.9));
-        }else{ //Adam optimiser that hasn't been implemented yet
-            opt.reset(new Adam(cfg.learning_rate));
-        }
+        }//else{ //Adam optimiser that hasn't been implemented yet
+        //    opt.reset(new Adam(cfg.learning_rate));
+        //}
 
         //check if csv is opened sucessfully and write header
         std::ofstream csv(cfg.out.c_str());
@@ -181,7 +181,7 @@ int main(int argc, char** argv){
         std::iota(idx.begin(), idx.end(), rng);
         std::vector<int> y;
 
-        for(int e = 0; e = cfg.epochs; ++e){
+        for(int e = 0; e < cfg.epochs; ++e){
             std::shuffle(idx.begin(), idx.end(), rng); //shuffle batch so program doesn't memorize batch order
             auto t0 = std::chrono::steady_clock::now();
             double total =0.0;
